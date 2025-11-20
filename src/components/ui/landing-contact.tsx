@@ -100,6 +100,7 @@ export function LandingContact() {
         email: "",
         business: "",
         message: "",
+        services: [],
       });
     } catch {
       setStatus("error");

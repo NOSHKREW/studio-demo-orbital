@@ -10,11 +10,13 @@ import {
 } from "react";
 import {
   AnimatePresence,
+  cubicBezier,
   motion,
   useAnimation,
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import type { Transition } from "framer-motion";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -56,8 +58,9 @@ function useMediaQuery(
   return matches;
 }
 
-const transition = { duration: 0.15, ease: [0.32, 0.72, 0, 1], filter: "blur(4px)" };
-const overlayTransition = { duration: 0.5, ease: [0.32, 0.72, 0, 1] };
+const easing = cubicBezier(0.32, 0.72, 0, 1);
+const transition: Transition = { duration: 0.15, ease: easing };
+const overlayTransition: Transition = { duration: 0.5, ease: easing };
 
 const Carousel = memo(
   ({
