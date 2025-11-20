@@ -145,6 +145,8 @@ const Carousel = memo(
                 initial={{ filter: "blur(4px)" }}
                 animate={{ filter: "blur(0px)" }}
                 transition={transition}
+                loading="lazy"
+                decoding="async"
               />
             </motion.div>
           ))}
@@ -157,6 +159,7 @@ Carousel.displayName = "Carousel";
 
 type ThreeDPhotoCarouselProps = {
   images?: string[];
+  autoRotate?: boolean;
 };
 
 const defaultKeywords = [
@@ -172,7 +175,7 @@ const defaultKeywords = [
   "coworking",
 ];
 
-export function ThreeDPhotoCarousel({ images }: ThreeDPhotoCarouselProps) {
+export function ThreeDPhotoCarousel({ images, autoRotate = true }: ThreeDPhotoCarouselProps) {
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const [dragging, setDragging] = useState(true);
   const controls = useAnimation();
@@ -219,7 +222,7 @@ export function ThreeDPhotoCarousel({ images }: ThreeDPhotoCarouselProps) {
           controls={controls}
           cards={cards}
           activeDrag={dragging}
-          autoRotate
+          autoRotate={autoRotate}
           onSelect={(url) => {
             setActiveImg(url);
             setDragging(false);

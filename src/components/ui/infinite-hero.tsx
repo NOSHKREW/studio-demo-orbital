@@ -4,8 +4,9 @@ import { useGSAP } from "@gsap/react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { useInView, useReducedMotion } from "framer-motion";
 
 gsap.registerPlugin(SplitText);
 
@@ -257,6 +258,26 @@ export default function InfiniteHero({
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const pRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [isCompactDisplay, setIsCompactDisplay] = useState(false);
+  const heroInView = useInView(rootRef, { amount: 0.5, margin: "-20% 0px" });
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsCompactDisplay(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  const shouldRenderShader =
+    hasMounted && showBackground && heroInView && !prefersReducedMotion && !isCompactDisplay;
 
   useGSAP(
     () => {
@@ -322,9 +343,13 @@ export default function InfiniteHero({
       <div ref={bgRef} className="absolute inset-0">
         {showBackground ? (
           <>
-            <ShaderBackground className="h-full w-full" />
+            {shouldRenderShader ? (
+              <ShaderBackground className="h-full w-full" />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-[#020b1b] via-[#050f1f] to-[#0a1b33]" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-b from-black via-black/60 to-transparent" />
-            <div className="absolute inset-0 opacity-30 mix-blend-screen [background:radial-gradient(120%_80%_at_50%_30%,rgba(255,255,255,0.4),transparent_70%)]" />
+            <div className="absolute inset-0 opacity-30 mix-blend-screen [background:radial-gradient(120%_80%_at_50%_30%,rgba(255,255,255,0.35),transparent_70%)]" />
           </>
         ) : null}
       </div>

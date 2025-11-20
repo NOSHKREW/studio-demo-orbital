@@ -1,5 +1,8 @@
 "use client";
 
+import { useRef } from "react";
+import { useInView } from "framer-motion";
+
 import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 
@@ -27,6 +30,9 @@ const projectGallery = [
 ];
 
 export function LandingGallery3D() {
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const carouselInView = useInView(carouselRef, { amount: 0.4, margin: "-20% 0px" });
+
   return (
     <section id="galeria" className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:py-20">
       <div className="text-center space-y-4">
@@ -37,9 +43,13 @@ export function LandingGallery3D() {
         </p>
       </div>
 
-      <div className="h-[360px] w-full pt-6 mt-4 md:h-[520px] md:mt-6">
+      <div
+        ref={carouselRef}
+        className="h-[360px] w-full pt-6 mt-4 md:h-[520px] md:mt-6"
+      >
         <ThreeDPhotoCarousel
           images={projectGallery.map((item) => item.image)}
+          autoRotate={carouselInView}
         />
       </div>
 
