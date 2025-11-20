@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useInView, useReducedMotion } from "framer-motion";
 
@@ -24,7 +24,14 @@ export function LandingMap() {
   const mapWrapperRef = useRef<HTMLDivElement>(null);
   const mapInView = useInView(mapWrapperRef, { amount: 0.3, margin: "-20% 0px" });
   const prefersReducedMotion = useReducedMotion();
-  const shouldRenderMap = mapInView && !prefersReducedMotion;
+  const [mapReady, setMapReady] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    if (mapInView) setMapReady(true);
+  }, [mapInView, prefersReducedMotion]);
+
+  const shouldRenderMap = mapReady && !prefersReducedMotion;
 
   return (
     <section id="mapa" className="relative z-10 w-full px-4 py-16 md:py-24">

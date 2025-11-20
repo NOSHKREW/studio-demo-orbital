@@ -41,6 +41,7 @@ export default function InfiniteHero({
   const prefersReducedMotion = useReducedMotion();
   const [shaderReady, setShaderReady] = useState(false);
   const [splitTextPlugin, setSplitTextPlugin] = useState<SplitTextType | null>(null);
+  const [compactHardwareReady, setCompactHardwareReady] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
@@ -53,6 +54,14 @@ export default function InfiniteHero({
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const cores = navigator.hardwareConcurrency ?? 4;
+    const deviceMemory =
+      (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+    setCompactHardwareReady(cores >= 6 && deviceMemory >= 4);
   }, []);
 
   useEffect(() => {
@@ -78,7 +87,12 @@ export default function InfiniteHero({
   }, []);
 
   const shouldRenderShader =
-    shaderReady && hasMounted && showBackground && heroInView && !prefersReducedMotion && !isCompactDisplay;
+    shaderReady &&
+    hasMounted &&
+    showBackground &&
+    heroInView &&
+    !prefersReducedMotion &&
+    (!isCompactDisplay || compactHardwareReady);
 
   useGSAP(
     () => {
