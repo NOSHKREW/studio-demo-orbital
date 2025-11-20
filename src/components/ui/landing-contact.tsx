@@ -47,6 +47,18 @@ export function LandingContact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
 
+  const buildWhatsAppLink = () => {
+    const intro = `Olá! Meu nome é ${formState.name || "___"} e represento ${formState.business || "uma empresa"}.`;
+    const services = formState.services.length
+      ? `Interesse: ${formState.services.join(", ")}.`
+      : "";
+    const details = formState.message ? `Detalhes: ${formState.message}` : "";
+    const contact = formState.email ? `Email: ${formState.email}` : "";
+    const whatsappInfo = formState.whatsapp ? `WhatsApp: ${formState.whatsapp}` : "";
+    const text = [intro, services, details, contact, whatsappInfo].filter(Boolean).join("%0A");
+    return `https://wa.me/${whatsappNumber}?text=${text}`;
+  };
+
   const handleChange = (field: keyof typeof formState) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState((prev) => ({ ...prev, [field]: event.target.value }));
   };
@@ -68,6 +80,7 @@ export function LandingContact() {
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
     const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
     const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+    const whatsappLink = buildWhatsAppLink();
 
     if (!serviceId || !templateId || !publicKey) {
       setStatus("error");
@@ -87,6 +100,8 @@ export function LandingContact() {
           business: formState.business,
           message: formState.message,
           services: formState.services.join(", "),
+          reply_to: formState.email,
+          whatsapp_link: whatsappLink,
         },
         {
           publicKey,
@@ -102,9 +117,20 @@ export function LandingContact() {
         message: "",
         services: [],
       });
-    } catch {
+    } catch (error) {
+      console.error("EmailJS send failed", error);
       setStatus("error");
-      setStatusMessage("Não conseguimos enviar agora. Tente novamente ou chame no WhatsApp.");
+      const apiMessage =
+        typeof error === "object" &&
+        error !== null &&
+        "text" in error &&
+        typeof (error as { text?: unknown }).text === "string"
+          ? (error as { text?: string }).text
+          : null;
+      setStatusMessage(
+        apiMessage ??
+          "Não conseguimos enviar agora. Tente novamente ou chame no WhatsApp.",
+      );
     } finally {
       setTimeout(() => {
         setStatus("idle");
@@ -113,19 +139,7 @@ export function LandingContact() {
     }
   };
 
-  const buildWhatsAppLink = () => {
-    const intro = `Olá! Meu nome é ${formState.name || "___"} e represento ${formState.business || "uma empresa"}.`;
-    const services = formState.services.length
-      ? `Interesse: ${formState.services.join(", ")}.`
-      : "";
-    const details = formState.message ? `Detalhes: ${formState.message}` : "";
-    const contact = formState.email ? `Email: ${formState.email}` : "";
-    const whatsappInfo = formState.whatsapp ? `WhatsApp: ${formState.whatsapp}` : "";
-    const text = [intro, services, details, contact, whatsappInfo]
-      .filter(Boolean)
-      .join("%0A");
-    return `https://wa.me/${whatsappNumber}?text=${text}`;
-  };
+  const whatsappButtonLink = buildWhatsAppLink();
 
   return (
     <section id="contato" className="relative z-10 mx-auto w-full max-w-5xl px-4 py-16 md:py-24">
@@ -266,7 +280,7 @@ export function LandingContact() {
                     : "Solicitar orçamento"}
               </Button>
               <a
-                href={buildWhatsAppLink()}
+                href={whatsappButtonLink}
                 target="_blank"
                 rel="noreferrer"
                 className="flex flex-1 items-center justify-center rounded-full border border-green-300/60 px-4 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-green-100 transition hover:bg-green-400/10"
