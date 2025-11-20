@@ -28,8 +28,8 @@ const menuItems = [
     gradient: ["#FF8C6F", "#FF5EBD"],
   },
   {
-    id: "projetos",
-    label: "Projetos",
+    id: "galeria",
+    label: "Galeria",
     icon: Compass,
     gradient: ["#78F7FF", "#5C6CFF"],
   },

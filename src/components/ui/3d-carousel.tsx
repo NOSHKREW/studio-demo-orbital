@@ -77,8 +77,8 @@ const Carousel = memo(
       defaultValue: false,
       initializeWithValue: false,
     });
-    const faceWidth = smallScreen ? 110 : 220;
-    const cylinderWidth = Math.max(faceWidth * cards.length, smallScreen ? 480 : 1800);
+    const faceWidth = smallScreen ? 80 : 180;
+    const cylinderWidth = Math.max(faceWidth * cards.length, smallScreen ? 320 : 1400);
     const radius = cylinderWidth / (2 * Math.PI);
     const rotation = useMotionValue(0);
     const transform = useTransform(

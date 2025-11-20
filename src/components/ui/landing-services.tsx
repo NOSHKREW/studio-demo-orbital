@@ -4,38 +4,51 @@ import Image from "next/image";
 
 import { TypingAnimation } from "@/components/ui/typing-animation";
 
-const services = [
+const imageMap: Record<string, string> = {
+  "Platahub": "/servicosfeitos/platahubs.jpeg",
+  "Digital DLX": "/servicosfeitos/digitaldlx.jpeg",
+  "Siso Conversions": "/servicosfeitos/sisoconversions.jpeg",
+  "Real Sabor HDR": "/servicosfeitos/realsabor.jpeg",
+  "B2Keeper World": "/servicosfeitos/b2keeper.jpeg",
+  "Corte Modelo": "/servicosfeitos/cortemodelo.jpeg",
+  "Siso Despesas": "/servicosfeitos/sisodespesas].jpeg",
+};
+
+const caseStudies = [
   {
-    title: "Sites autorais e performáticos",
-    base: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-    overlay:
-      "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Design premium pronto para receber identidade e integrações exclusivas.",
+    name: "Platahub",
+    url: "https://app.platahub.com/",
+    summary: "Painel completo para assinaturas, integrações e métricas em tempo real.",
   },
   {
-    title: "Integrações e automações",
-    base: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=80",
-    overlay:
-      "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=600&q=80",
-    description:
-      "WhatsApp, Google Agenda, ERPs e CRMs conectados para o cliente não perder nenhum pedido.",
+    name: "Digital DLX",
+    url: "https://curious-stardust-dbf60e.netlify.app/",
+    summary: "Landing 3D experimental com narrativa cinematográfica.",
   },
   {
-    title: "Agendamentos e pagamentos",
-    base: "https://images.unsplash.com/photo-1521790797524-b2497295b8a0?auto=format&fit=crop&w=800&q=80",
-    overlay:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Fluxos de reservas, recorrência e checkout com Pix e cartão em poucos cliques.",
+    name: "Siso Conversions",
+    url: "https://sisoconversions.com/",
+    summary: "Plataforma internacional focada em performance de vendas.",
   },
   {
-    title: "Conteúdo e campanhas locais",
-    base: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80",
-    overlay:
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80",
-    description:
-      "Landing pages com promoções, menus, planos e depoimentos para cada segmento.",
+    name: "Real Sabor HDR",
+    url: "https://www.realsaborhdr.com/",
+    summary: "Cardápio digital com reservas, delivery e promoções dinâmicas.",
+  },
+  {
+    name: "B2Keeper World",
+    url: "https://www.b2keeperworld.com/",
+    summary: "Hub global de tecnologia com multilíngue e CRM integrado.",
+  },
+  {
+    name: "Corte Modelo",
+    url: "https://cortemodelo1.netlify.app/",
+    summary: "Site ultra leve para serviços locais, agendamentos e planos.",
+  },
+  {
+    name: "Siso Despesas",
+    url: "https://despesassiso.org/",
+    summary: "Portal institucional com relatórios e área restrita.",
   },
 ];
 
@@ -51,42 +64,58 @@ export function LandingServices() {
           Uma base pensada para customizar em minutos: trocamos imagens, textos
           e integrações para cada proposta e já chegamos prontos na apresentação.
         </p>
+        <div className="mt-6 space-y-2 text-sm text-white/65">
+          <p className="text-xs uppercase tracking-[0.45em] text-white/40">
+            clientes e demos em produção
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {caseStudies.map((project) => (
+              <a
+                key={project.url}
+                href={project.url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white/70 transition hover:border-cyan-300/50 hover:text-white"
+                title={project.summary}
+              >
+                {project.name}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-        {services.map((service) => (
-          <article
-            key={service.title}
-            className="group flex h-[320px] flex-col rounded-[32px] bg-white/5 p-6 shadow-[0_35px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl transition hover:bg-white/10"
-          >
-            <div className="relative flex flex-1 items-center justify-center">
-              <div className="relative h-32 w-40">
+      <div className="mt-12 space-y-4 rounded-[40px] border border-white/10 bg-white/5 p-6 shadow-[0_35px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {caseStudies.map((project) => (
+            <a
+              key={project.url}
+              href={project.url}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex flex-col gap-4 rounded-3xl border border-white/10 p-4 transition hover:border-cyan-300/50 hover:bg-white/5"
+            >
+              <div className="relative h-36 overflow-hidden rounded-3xl">
                 <Image
-                  src={service.base}
-                  alt={`${service.title} base`}
+                  src={imageMap[project.name]}
+                  alt={project.name}
                   fill
-                  sizes="200px"
-                  className="rounded-2xl object-cover shadow-lg shadow-black/40 transition duration-500 group-hover:-rotate-6 group-hover:scale-105"
+                  sizes="400px"
+                  className="object-cover transition duration-700 group-hover:scale-105"
                 />
               </div>
-              <div className="relative h-32 w-40 translate-x-12 -translate-y-6">
-                <Image
-                  src={service.overlay}
-                  alt={`${service.title} destaque`}
-                  fill
-                  sizes="200px"
-                  className="rounded-2xl object-cover shadow-2xl shadow-black/50 transition duration-500 group-hover:rotate-3 group-hover:scale-110"
-                />
+              <div>
+                <p className="text-xs uppercase tracking-[0.4em] text-white/50">
+                  case real
+                </p>
+                <h3 className="text-lg font-semibold text-white">
+                  {project.name}
+                </h3>
+                <p className="text-sm text-white/70">{project.summary}</p>
               </div>
-            </div>
-            <div className="mt-auto">
-              <h3 className="text-lg font-semibold text-white">
-                {service.title}
-              </h3>
-              <p className="text-sm text-white/70">{service.description}</p>
-            </div>
-          </article>
-        ))}
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   );

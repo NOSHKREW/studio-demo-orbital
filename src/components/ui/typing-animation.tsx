@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useInView } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -16,24 +17,37 @@ export function TypingAnimation({
   className,
 }: TypingAnimationProps) {
   const [index, setIndex] = useState(0);
+  const [started, setStarted] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const isInView = useInView(headingRef, { once: true, margin: "-20% 0px" });
 
   useEffect(() => {
+    if (!isInView) return;
+    const frame = requestAnimationFrame(() => setStarted(true));
+    return () => cancelAnimationFrame(frame);
+  }, [isInView]);
+
+  useEffect(() => {
+    if (!started) return;
     const frame = requestAnimationFrame(() => setIndex(0));
     return () => cancelAnimationFrame(frame);
-  }, [text]);
+  }, [text, started]);
 
   useEffect(() => {
-    if (index >= text.length) return;
+    if (!started || index >= text.length) return;
     const timeout = setTimeout(() => {
       setIndex((prev) => Math.min(prev + 1, text.length));
     }, duration);
     return () => clearTimeout(timeout);
-  }, [duration, index, text.length]);
+  }, [duration, index, started, text.length]);
 
-  const displayedText = text.substring(0, index) || text;
+  const displayedText = started
+    ? text.substring(0, Math.max(index, 1))
+    : "";
 
   return (
     <h2
+      ref={headingRef}
       className={cn(
         "font-display text-center text-4xl font-bold leading-tight tracking-[-0.02em] text-white drop-shadow-sm md:text-5xl",
         className,

@@ -339,15 +339,15 @@ export default function InfiniteHero({
             ref={h1Ref}
             className="mx-auto max-w-2xl lg:max-w-4xl text-[clamp(2.25rem,6vw,4rem)] font-extralight leading-[0.95] tracking-tight"
           >
-            A estrada dissolve na luz, o horizonte permanece invisível.
+            Traçamos rotas digitais que fazem sua marca atravessar o Brasil.
           </h1>
           <p
             ref={pRef}
             className="mx-auto mt-4 max-w-2xl md:text-balance text-sm/6 md:text-base/7 font-light tracking-tight text-white/70"
           >
-            Estruturas minimalistas se desfazem em um horizonte amplo, onde
-            presença e ausência se misturam. Uma tensão silenciosa convida o
-            olhar a explorar sem pressa.
+            Sites com luz própria, animações com propósito e experiências que
+            convertem em qualquer tela. Não é só uma hero image bonita — é um
+            manifesto vivo para marcas que querem escala.
           </p>
 
           <div
@@ -358,14 +358,14 @@ export default function InfiniteHero({
               type="button"
               className="group relative overflow-hidden border border-white/30 bg-gradient-to-r from-white/20 to-white/10 px-4 py-2 text-sm rounded-lg font-medium tracking-wide text-white backdrop-blur-sm transition-[border-color,background-color,box-shadow] duration-500 hover:border-white/50 hover:bg-white/20 hover:shadow-lg hover:shadow-white/10 cursor-pointer"
             >
-              Ver demonstração
+              Ver tour guiado
             </button>
 
             <button
               type="button"
               className="group relative px-4 py-2 text-sm font-medium tracking-wide text-white/90 transition-[filter,color] duration-500 hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)] hover:text-white cursor-pointer"
             >
-              Portfólio completo
+              Explorar coleção
             </button>
           </div>
         </div>
