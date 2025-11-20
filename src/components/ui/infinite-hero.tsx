@@ -42,6 +42,7 @@ export default function InfiniteHero({
   const [shaderReady, setShaderReady] = useState(false);
   const [splitTextPlugin, setSplitTextPlugin] = useState<SplitTextType | null>(null);
   const [compactHardwareReady, setCompactHardwareReady] = useState(false);
+  const [heroEverVisible, setHeroEverVisible] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
@@ -86,6 +87,12 @@ export default function InfiniteHero({
     };
   }, []);
 
+  useEffect(() => {
+    if (heroInView) {
+      setHeroEverVisible(true);
+    }
+  }, [heroInView]);
+
   const shouldRenderShader =
     shaderReady &&
     hasMounted &&
@@ -93,6 +100,7 @@ export default function InfiniteHero({
     heroInView &&
     !prefersReducedMotion &&
     (!isCompactDisplay || compactHardwareReady);
+  const displayBackground = showBackground && (heroInView || !heroEverVisible);
 
   useGSAP(
     () => {
@@ -157,7 +165,7 @@ export default function InfiniteHero({
       className={`relative h-svh w-full overflow-hidden text-white ${showBackground ? "bg-black" : "bg-transparent"}`}
     >
       <div ref={bgRef} className="absolute inset-0">
-        {showBackground ? (
+        {displayBackground ? (
           <>
             {shouldRenderShader ? (
               <DynamicShaderBackground className="h-full w-full" />
@@ -170,7 +178,7 @@ export default function InfiniteHero({
         ) : null}
       </div>
 
-      {showBackground && (
+      {displayBackground && (
         <div className="pointer-events-none absolute inset-0 [background:radial-gradient(120%_80%_at_50%_50%,_transparent_40%,_black_100%)]" />
       )}
 
