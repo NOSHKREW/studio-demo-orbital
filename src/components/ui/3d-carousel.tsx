@@ -92,8 +92,8 @@ const Carousel = memo(
     useEffect(() => {
       if (!autoRotate || !activeDrag) return;
       const interval = setInterval(() => {
-        rotation.set(rotation.get() + 0.15);
-      }, 40);
+        rotation.set(rotation.get() + 0.12);
+      }, 60);
       return () => clearInterval(interval);
     }, [autoRotate, activeDrag, rotation]);
 
@@ -186,7 +186,7 @@ export function ThreeDPhotoCarousel({ images, autoRotate = true }: ThreeDPhotoCa
     }
     return defaultKeywords.map(
       (keyword) =>
-        `https://images.unsplash.com/featured/?${keyword}&w=800&q=80`,
+        `https://images.unsplash.com/featured/?${keyword}&auto=format&fit=crop&w=640&q=65`,
     );
   }, [images]);
 

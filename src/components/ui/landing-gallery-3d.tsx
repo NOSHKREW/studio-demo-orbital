@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 
 import type { ThreeDPhotoCarouselProps } from "@/components/ui/3d-carousel";
@@ -43,9 +43,20 @@ const projectGallery = [
   { title: "Studio Orbital • Home 3D", image: "/gallery/studioorbital.png" },
 ];
 
+const CarouselPlaceholder = () => (
+  <div className="h-full w-full animate-pulse rounded-[32px] border border-white/10 bg-white/5" />
+);
+
 export function LandingGallery3D() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const carouselInView = useInView(carouselRef, { amount: 0.4, margin: "-20% 0px" });
+  const [carouselReady, setCarouselReady] = useState(false);
+
+  useEffect(() => {
+    if (carouselInView) {
+      setCarouselReady(true);
+    }
+  }, [carouselInView]);
 
   return (
     <section id="galeria" className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:py-20">
@@ -61,10 +72,14 @@ export function LandingGallery3D() {
         ref={carouselRef}
         className="h-[360px] w-full pt-6 mt-4 md:h-[520px] md:mt-6"
       >
-        <LazyThreeDPhotoCarousel
-          images={projectGallery.map((item) => item.image)}
-          autoRotate={carouselInView}
-        />
+        {carouselReady ? (
+          <LazyThreeDPhotoCarousel
+            images={projectGallery.map((item) => item.image)}
+            autoRotate={carouselInView}
+          />
+        ) : (
+          <CarouselPlaceholder />
+        )}
       </div>
 
       <div className="mt-10 grid gap-6 rounded-[32px] border border-white/10 bg-white/5 p-6 text-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:grid-cols-2">

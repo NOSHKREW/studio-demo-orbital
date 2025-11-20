@@ -2,12 +2,11 @@
 
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useInView, useReducedMotion } from "framer-motion";
 
-gsap.registerPlugin(SplitText);
+type SplitTextType = typeof import("gsap/SplitText").SplitText;
 
 const ShaderBackgroundGradient = () => (
   <div className="h-full w-full bg-gradient-to-br from-[#020b1b] via-[#050f1f] to-[#0a1b33]" />
@@ -40,6 +39,8 @@ export default function InfiniteHero({
   const [isCompactDisplay, setIsCompactDisplay] = useState(false);
   const heroInView = useInView(rootRef, { amount: 0.5, margin: "-20% 0px" });
   const prefersReducedMotion = useReducedMotion();
+  const [shaderReady, setShaderReady] = useState(false);
+  const [splitTextPlugin, setSplitTextPlugin] = useState<SplitTextType | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
@@ -54,15 +55,38 @@ export default function InfiniteHero({
     return () => media.removeEventListener("change", update);
   }, []);
 
+  useEffect(() => {
+    if (!hasMounted) return;
+    const timeout = window.setTimeout(() => setShaderReady(true), 450);
+    return () => clearTimeout(timeout);
+  }, [hasMounted]);
+
+  useEffect(() => {
+    let isMounted = true;
+    import("gsap/SplitText")
+      .then(({ SplitText }) => {
+        if (!isMounted) return;
+        gsap.registerPlugin(SplitText);
+        setSplitTextPlugin(() => SplitText);
+      })
+      .catch(() => {
+        /* no-op */
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const shouldRenderShader =
-    hasMounted && showBackground && heroInView && !prefersReducedMotion && !isCompactDisplay;
+    shaderReady && hasMounted && showBackground && heroInView && !prefersReducedMotion && !isCompactDisplay;
 
   useGSAP(
     () => {
+      if (!splitTextPlugin) return;
       const ctas = ctaRef.current ? Array.from(ctaRef.current.children) : [];
 
-      const h1Split = new SplitText(h1Ref.current, { type: "lines" });
-      const pSplit = new SplitText(pRef.current, { type: "lines" });
+      const h1Split = new splitTextPlugin(h1Ref.current, { type: "lines" });
+      const pSplit = new splitTextPlugin(pRef.current, { type: "lines" });
 
       gsap.set(bgRef.current, { filter: showBackground ? "blur(28px)" : "none" });
       gsap.set(h1Split.lines, {
@@ -110,7 +134,7 @@ export default function InfiniteHero({
         pSplit.revert();
       };
     },
-    { scope: rootRef, dependencies: [showBackground] },
+    { scope: rootRef, dependencies: [showBackground, splitTextPlugin] },
   );
 
   return (
