@@ -157,7 +157,7 @@ const Carousel = memo(
 );
 Carousel.displayName = "Carousel";
 
-type ThreeDPhotoCarouselProps = {
+export type ThreeDPhotoCarouselProps = {
   images?: string[];
   autoRotate?: boolean;
 };

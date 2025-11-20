@@ -1,10 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { useInView } from "framer-motion";
 
-import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel";
+import type { ThreeDPhotoCarouselProps } from "@/components/ui/3d-carousel";
 import { TypingAnimation } from "@/components/ui/typing-animation";
+
+const LazyThreeDPhotoCarousel = dynamic<ThreeDPhotoCarouselProps>(
+  () =>
+    import("@/components/ui/3d-carousel").then(
+      (mod) => mod.ThreeDPhotoCarousel,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full w-full animate-pulse rounded-[32px] border border-white/10 bg-white/5" />
+    ),
+  },
+);
 
 const projectGallery = [
   { title: "Platahub • Painel do revendedor", image: "/gallery/platahubdashboard.png" },
@@ -47,7 +61,7 @@ export function LandingGallery3D() {
         ref={carouselRef}
         className="h-[360px] w-full pt-6 mt-4 md:h-[520px] md:mt-6"
       >
-        <ThreeDPhotoCarousel
+        <LazyThreeDPhotoCarousel
           images={projectGallery.map((item) => item.image)}
           autoRotate={carouselInView}
         />
