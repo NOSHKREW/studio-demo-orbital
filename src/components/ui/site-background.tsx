@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
 
 const ShaderBackgroundGradient = () => (
@@ -18,10 +20,33 @@ const DynamicShaderBackground = dynamic(
 );
 
 export function SiteBackground() {
+  const [hasMounted, setHasMounted] = useState(false);
+  const [isCompactDisplay, setIsCompactDisplay] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(max-width: 1024px)");
+    const handleChange = () => setIsCompactDisplay(media.matches);
+    handleChange();
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
+
+  const shouldRenderShader = hasMounted && !prefersReducedMotion && !isCompactDisplay;
+
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
       <div className="absolute inset-0">
-        <DynamicShaderBackground className="h-full w-full" />
+        {shouldRenderShader ? (
+          <DynamicShaderBackground className="h-full w-full" />
+        ) : (
+          <ShaderBackgroundGradient />
+        )}
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-[#070c16] via-[#05080f]/60 to-[#030407]" />
       <div className="absolute inset-0 opacity-70 mix-blend-screen [background:radial-gradient(140%_90%_at_50%_-20%,rgba(255,255,255,0.28),transparent_70%)]" />

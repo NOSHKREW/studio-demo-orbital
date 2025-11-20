@@ -1,9 +1,31 @@
 "use client";
 
-import { WorldMap } from "@/components/ui/map";
+import { useRef } from "react";
+import dynamic from "next/dynamic";
+import { useInView, useReducedMotion } from "framer-motion";
+
 import { TypingAnimation } from "@/components/ui/typing-animation";
 
+const LazyWorldMap = dynamic(
+  () =>
+    import("@/components/ui/map").then((mod) => ({
+      default: mod.WorldMap,
+    })),
+  {
+    ssr: false,
+  },
+);
+
+const MapPlaceholder = () => (
+  <div className="h-[520px] rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-white/5 opacity-80 backdrop-blur-sm" />
+);
+
 export function LandingMap() {
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  const mapInView = useInView(mapWrapperRef, { amount: 0.3, margin: "-20% 0px" });
+  const prefersReducedMotion = useReducedMotion();
+  const shouldRenderMap = mapInView && !prefersReducedMotion;
+
   return (
     <section id="mapa" className="relative z-10 w-full px-4 py-16 md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -14,8 +36,12 @@ export function LandingMap() {
           parceiros espalhados pelo país.
         </p>
       </div>
-      <div className="mx-auto mt-12 max-w-5xl space-y-6">
-        <WorldMap showCityMarkers={false} />
+      <div ref={mapWrapperRef} className="mx-auto mt-12 max-w-5xl space-y-6">
+        {shouldRenderMap ? (
+          <LazyWorldMap showCityMarkers={false} />
+        ) : (
+          <MapPlaceholder />
+        )}
         <section className="grid gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-6 text-sm text-white/80 md:grid-cols-2">
           <div className="space-y-3">
             <p className="text-white">Rotas em movimento:</p>
